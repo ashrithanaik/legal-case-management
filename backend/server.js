@@ -6,6 +6,7 @@ const morgan = require("morgan");
 const userRoutes = require("./routes/userRoutes");
 const caseRoutes = require("./routes/caseRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
+const documentRoutes = require("./routes/documentRoutes");
 dotenv.config();
 
 const connectDB = require("./config/db");
@@ -32,6 +33,8 @@ app.get("/", (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/cases", caseRoutes);
 app.use("/api/dashboard", dashboardRoutes);
+app.use("/uploads", express.static("uploads"));
+app.use("/api/documents", documentRoutes);
 
 const PORT = process.env.PORT || 5001;
 

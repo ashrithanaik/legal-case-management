@@ -1,12 +1,8 @@
-import {Navigate} from "react-router-dom";
-import {getRole} from "../services/auth";
+import { Navigate } from "react-router-dom";
+import { isAuthenticated } from "../services/auth";
 
-function ProtectedRoute({children}){
-
-const role=getRole();
-
-return role ? children : <Navigate to="/" />;
-
+function ProtectedRoute({ children }) {
+  return isAuthenticated() ? children : <Navigate to="/" replace />;
 }
 
 export default ProtectedRoute;

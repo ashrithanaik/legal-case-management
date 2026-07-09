@@ -5,7 +5,7 @@ const router = express.Router();
 const {
   createCase,
   getCases,
-  getCaseById,
+  getCase,
   updateCase,
   deleteCase,
 } = require("../controllers/caseController");
@@ -16,7 +16,7 @@ router.post("/", protect, createCase);
 
 router.get("/", protect, getCases);
 
-router.get("/:id", protect, getCaseById);
+router.get("/:id", protect, getCase);
 
 router.put("/:id", protect, updateCase);
 

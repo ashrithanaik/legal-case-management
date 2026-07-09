@@ -7,14 +7,14 @@ import {
   MenuItem,
 } from "@mui/material";
 import { useState } from "react";
+import { createCase } from "../../services/caseService";
+import { getToken } from "../../services/auth";
 
 function CreateCase() {
   const [caseData, setCaseData] = useState({
-    caseId: "",
     title: "",
-    client: "",
-    lawyer: "",
-    type: "",
+    clientName: "",
+    lawyerName: "",
     status: "Open",
     hearingDate: "",
     description: "",
@@ -27,9 +27,23 @@ function CreateCase() {
     });
   };
 
-  const handleSubmit = () => {
-    alert("Case Created Successfully!");
-    console.log(caseData);
+  const handleSubmit = async () => {
+    try {
+      await createCase(caseData, getToken());
+
+      alert("Case Created Successfully!");
+
+      setCaseData({
+        title: "",
+        clientName: "",
+        lawyerName: "",
+        status: "Open",
+        hearingDate: "",
+        description: "",
+      });
+    } catch (err) {
+      alert(err.response?.data?.message || "Failed to create case");
+    }
   };
 
   return (
@@ -39,17 +53,7 @@ function CreateCase() {
       </Typography>
 
       <Grid container spacing={3}>
-        <Grid item xs={12} md={6}>
-          <TextField
-            fullWidth
-            label="Case ID"
-            name="caseId"
-            value={caseData.caseId}
-            onChange={handleChange}
-          />
-        </Grid>
-
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12}>
           <TextField
             fullWidth
             label="Case Title"
@@ -63,8 +67,8 @@ function CreateCase() {
           <TextField
             fullWidth
             label="Client Name"
-            name="client"
-            value={caseData.client}
+            name="clientName"
+            value={caseData.clientName}
             onChange={handleChange}
           />
         </Grid>
@@ -72,27 +76,11 @@ function CreateCase() {
         <Grid item xs={12} md={6}>
           <TextField
             fullWidth
-            label="Assign Lawyer"
-            name="lawyer"
-            value={caseData.lawyer}
+            label="Lawyer Name"
+            name="lawyerName"
+            value={caseData.lawyerName}
             onChange={handleChange}
           />
-        </Grid>
-
-        <Grid item xs={12} md={6}>
-          <TextField
-            select
-            fullWidth
-            label="Case Type"
-            name="type"
-            value={caseData.type}
-            onChange={handleChange}
-          >
-            <MenuItem value="Civil">Civil</MenuItem>
-            <MenuItem value="Criminal">Criminal</MenuItem>
-            <MenuItem value="Property">Property</MenuItem>
-            <MenuItem value="Family">Family</MenuItem>
-          </TextField>
         </Grid>
 
         <Grid item xs={12} md={6}>
@@ -110,15 +98,15 @@ function CreateCase() {
           </TextField>
         </Grid>
 
-        <Grid item xs={12}>
+        <Grid item xs={12} md={6}>
           <TextField
             fullWidth
             type="date"
-            name="hearingDate"
-            InputLabelProps={{ shrink: true }}
             label="Hearing Date"
+            name="hearingDate"
             value={caseData.hearingDate}
             onChange={handleChange}
+            InputLabelProps={{ shrink: true }}
           />
         </Grid>
 
@@ -127,7 +115,7 @@ function CreateCase() {
             fullWidth
             multiline
             rows={5}
-            label="Case Description"
+            label="Description"
             name="description"
             value={caseData.description}
             onChange={handleChange}
@@ -135,11 +123,7 @@ function CreateCase() {
         </Grid>
 
         <Grid item xs={12}>
-          <Button
-            variant="contained"
-            size="large"
-            onClick={handleSubmit}
-          >
+          <Button variant="contained" size="large" onClick={handleSubmit}>
             Create Case
           </Button>
         </Grid>

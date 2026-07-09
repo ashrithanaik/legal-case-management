@@ -5,7 +5,7 @@ import {
   Typography,
   TextField,
   Button,
-  MenuItem,
+  Alert,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { login } from "../services/auth";
@@ -13,50 +13,53 @@ import { login } from "../services/auth";
 function Login() {
   const navigate = useNavigate();
 
-  const [role, setRole] = useState("Admin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
-  const handleLogin = () => {
-    login(role);
+  const handleLogin = async () => {
+    try {
+      setError("");
 
-    switch (role) {
-      case "Admin":
-        navigate("/admin");
-        break;
+      const data = await login(email, password);
 
-      case "Lawyer":
-        navigate("/lawyer");
-        break;
+      switch (data.user.role) {
+        case "admin":
+          navigate("/admin");
+          break;
 
-      case "Client":
-        navigate("/client-dashboard");
-        break;
+        case "lawyer":
+          navigate("/lawyer");
+          break;
 
-      default:
-        navigate("/");
+        case "client":
+          navigate("/client-dashboard");
+          break;
+
+        default:
+          navigate("/");
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || "Invalid email or password");
     }
   };
 
   return (
     <Container maxWidth="sm" sx={{ mt: 8 }}>
       <Paper elevation={6} sx={{ p: 4, borderRadius: 3 }}>
-        <Typography
-          variant="h4"
-          align="center"
-          gutterBottom
-          fontWeight="bold"
-        >
+        <Typography variant="h4" align="center" gutterBottom fontWeight="bold">
           Cloud Legal Case Management
         </Typography>
 
-        <Typography
-          align="center"
-          color="text.secondary"
-          sx={{ mb: 3 }}
-        >
+        <Typography align="center" color="text.secondary" sx={{ mb: 3 }}>
           Login to continue
         </Typography>
+
+        {error && (
+          <Alert severity="error" sx={{ mb: 2 }}>
+            {error}
+          </Alert>
+        )}
 
         <TextField
           fullWidth
@@ -74,19 +77,6 @@ function Login() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-
-        <TextField
-          select
-          fullWidth
-          label="Role"
-          margin="normal"
-          value={role}
-          onChange={(e) => setRole(e.target.value)}
-        >
-          <MenuItem value="Admin">Admin</MenuItem>
-          <MenuItem value="Lawyer">Lawyer</MenuItem>
-          <MenuItem value="Client">Client</MenuItem>
-        </TextField>
 
         <Button
           fullWidth

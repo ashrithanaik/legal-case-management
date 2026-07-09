@@ -24,7 +24,12 @@ const registerUser = async (req, res) => {
     res.status(201).json({
       success: true,
       token: generateToken(user._id, user.role),
-      user,
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
     });
   } catch (error) {
     res.status(500).json({
@@ -59,7 +64,12 @@ const loginUser = async (req, res) => {
     res.json({
       success: true,
       token: generateToken(user._id, user.role),
-      user,
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
     });
   } catch (error) {
     res.status(500).json({

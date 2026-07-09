@@ -10,27 +10,22 @@ const caseSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    clientName: {
+      type: String,
+      required: true,
+    },
+    lawyerName: {
+      type: String,
+      default: "",
+    },
     status: {
       type: String,
       enum: ["Open", "In Progress", "Closed"],
       default: "Open",
     },
-    client: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-    },
-    lawyer: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-    },
     hearingDate: {
       type: Date,
     },
-    documents: [
-      {
-        type: String,
-      },
-    ],
   },
   {
     timestamps: true,

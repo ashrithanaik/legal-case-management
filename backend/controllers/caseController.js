@@ -2,11 +2,11 @@ const Case = require("../models/Case");
 
 const createCase = async (req, res) => {
   try {
-    const caseData = await Case.create(req.body);
+    const newCase = await Case.create(req.body);
 
     res.status(201).json({
       success: true,
-      data: caseData,
+      case: newCase,
     });
   } catch (err) {
     res.status(500).json({
@@ -17,87 +17,55 @@ const createCase = async (req, res) => {
 };
 
 const getCases = async (req, res) => {
-  try {
-    const cases = await Case.find()
-      .populate("client", "name email")
-      .populate("lawyer", "name email");
+  const cases = await Case.find().sort({ createdAt: -1 });
 
-    res.json({
-      success: true,
-      count: cases.length,
-      data: cases,
-    });
-  } catch (err) {
-    res.status(500).json({
-      success: false,
-      message: err.message,
-    });
-  }
+  res.json({
+    success: true,
+    count: cases.length,
+    cases,
+  });
 };
 
-const getCaseById = async (req, res) => {
-  try {
-    const caseData = await Case.findById(req.params.id)
-      .populate("client", "name email")
-      .populate("lawyer", "name email");
+const getCase = async (req, res) => {
+  const oneCase = await Case.findById(req.params.id);
 
-    if (!caseData) {
-      return res.status(404).json({
-        success: false,
-        message: "Case not found",
-      });
-    }
-
-    res.json({
-      success: true,
-      data: caseData,
-    });
-  } catch (err) {
-    res.status(500).json({
+  if (!oneCase) {
+    return res.status(404).json({
       success: false,
-      message: err.message,
+      message: "Case not found",
     });
   }
+
+  res.json({
+    success: true,
+    case: oneCase,
+  });
 };
 
 const updateCase = async (req, res) => {
-  try {
-    const updated = await Case.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-    });
+  const updated = await Case.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+  });
 
-    res.json({
-      success: true,
-      data: updated,
-    });
-  } catch (err) {
-    res.status(500).json({
-      success: false,
-      message: err.message,
-    });
-  }
+  res.json({
+    success: true,
+    case: updated,
+  });
 };
 
 const deleteCase = async (req, res) => {
-  try {
-    await Case.findByIdAndDelete(req.params.id);
+  await Case.findByIdAndDelete(req.params.id);
 
-    res.json({
-      success: true,
-      message: "Case deleted successfully",
-    });
-  } catch (err) {
-    res.status(500).json({
-      success: false,
-      message: err.message,
-    });
-  }
+  res.json({
+    success: true,
+    message: "Case Deleted",
+  });
 };
 
 module.exports = {
   createCase,
   getCases,
-  getCaseById,
+  getCase,
   updateCase,
   deleteCase,
 };
